@@ -19,6 +19,7 @@ class MtMethod():
                 input_data(pandas.DataFrame): 標準空間を作るためのデータ(項目数以上のサンプルデータが必要)
                 dst_path(str): 可視化結果出力先フォルダ
                 x_col_plot(str): 可視化結果出力先フォルダ
+                
         '''
         dst_path_ = FileHandle.join_file(dst_path, "mt_check")
 

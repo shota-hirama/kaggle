@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-from file_handle import FileHandle
+import file_handle
 
 #グラフのスタイルをseabornに変更
 sns.set(font='Meiryo')
@@ -12,9 +12,23 @@ class data_visulization():
         構造化データを可視化するためのクラス。
     '''
 
+	def join_name(f_name, plot_name):
+		'''
+            可視化ファイル名取得のためのメソッド。
+
+            Args:
+                f_name(str): 解析名
+                plot_name(str): 出力グラフ名
+        '''
+		name = plot_name
+		if f_name != "":
+			name = f_name + "_" + plot_name
+		return name
+
+
     def output_fig(self, plt, dst_path, f_name):
         '''
-            可視化結果をを出力するためのメソッド。
+            可視化結果を出力するためのメソッド。
 
             Args:
                 plt(module): 可視化結果
@@ -22,42 +36,47 @@ class data_visulization():
                 f_name(str): 可視化結果出力ファイル名
         '''
         if dst_path != "":
-            dst = FileHandle.join_file(dst_path, f_name)
+            dst = file_handle.join_path([dst_path, f_name])
             plt.savefig(dst)
         else:
             plt.show()
         plt.close('all')
 
-    def heatmap(self, input_data, dst_path=""):
+    def heatmap(self, input_data, f_name="", dst_path=""):
         '''
             ヒートマップを出力するためのメソッド。
 
             Args:
                 input_data(pandas.DataFrame): グラフ描写のためのデータ
+				f_name(str): 解析名
                 dst_path(str): 可視化結果出力先フォルダ
         '''
         plt.figure(figsize=(15, 15))
         sns.heatmap(input_data, annot=True, fmt="1.2f", cmap="coolwarm", square=True, vmax=1, vmin=-1)
-        self.output_fig(plt, dst_path, "heatmap.jpeg")
+		name = join_name(f_name, "heatmap.jpg")
+        self.output_fig(plt, dst_path, name)
 
-    def pairplot(self, input_data, dst_path=""):
+    def pairplot(self, input_data, f_name="", dst_path=""):
         '''
             ペアープロット(単相関/分布)を出力するためのメソッド。
 
             Args:
                 input_data(pandas.DataFrame): グラフ描写のためのデータ
+				f_name(str): 解析名
                 dst_path(str): 可視化結果出力先フォルダ
         '''
         sns.pairplot(input_data)
-        self.output_fig(plt, dst_path, "pairplot.jpeg")
+		name = join_name(f_name, "pairplot.jpg")
+        self.output_fig(plt, dst_path, name)
 
-    def plot(self, input_data, x_col_nm="", dst_path=""):
+    def plot(self, input_data, x_col_nm="", f_name="", dst_path=""):
         '''
             線グラフを出力するためのメソッド。
 
             Args:
                 input_data(pandas.DataFrame): グラフ描写のためのデータ
                 x_col_nm(str): X軸に設定する列名称
+				f_name(str): 解析名
                 dst_path(str): 可視化結果出力先フォルダ
         '''
         rows, cols = input_data.shape
@@ -77,15 +96,16 @@ class data_visulization():
             y = input_data[col_nm].values
             ax.plot(x, y, label=col_nm, marker=".")
             plt.legend()
+		name = join_name(f_name, "plot.jpg")
+        self.output_fig(plt, dst_path, name)
 
-        self.output_fig(plt, dst_path, "plot.jpeg")
-
-    def distplot(self, input_data, dst_path=""):
+    def distplot(self, input_data, f_name="", dst_path=""):
         '''
             ヒスト(分布)を出力するためのメソッド。
 
             Args:
                 input_data(pandas.DataFrame): グラフ描写のためのデータ
+				f_name(str): 解析名
                 dst_path(str): 可視化結果出力先フォルダ
         '''
         rows, cols = input_data.shape
@@ -111,10 +131,10 @@ class data_visulization():
 
             sns.distplot(x, label=col_nm, ax=ax, kde=kde)
             plt.legend()
+		name = join_name(f_name, "distplot.jpg")
+        self.output_fig(plt, dst_path, name)
 
-        self.output_fig(plt, dst_path, "distplot.jpeg")
-
-    def scatter(self, input_data, x_col_nm="", y_col_nm="", dst_path=""):
+    def scatter(self, input_data, x_col_nm="", y_col_nm="", f_name="", dst_path=""):
         '''
             散布図を出力するためのメソッド。
 
@@ -122,6 +142,7 @@ class data_visulization():
                 input_data(pandas.DataFrame): グラフ描写のためのデータ
                 x_col_nm(str): X軸に設定する列名称
                 y_col_nm(str): Y軸に設定する列名称
+				f_name(str): 解析名
                 dst_path(str): 可視化結果出力先フォルダ
         '''
         plt.figure(figsize=(15, 15))
@@ -131,5 +152,5 @@ class data_visulization():
         plt.grid(True)
         plt.xlabel(x_col_nm)
         plt.ylabel(y_col_nm)
-
-        self.output_fig(plt, dst_path, "scatter.jpeg")
+		name = join_name(f_name, "scatter.jpg")
+        self.output_fig(plt, dst_path, name)
